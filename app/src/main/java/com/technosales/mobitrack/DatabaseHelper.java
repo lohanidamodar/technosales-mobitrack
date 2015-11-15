@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.traccar.client;
+package com.technosales.mobitrack;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -29,38 +29,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "traccar.db";
-
-    public interface DatabaseHandler<T> {
-        void onComplete(boolean success, T result);
-    }
-
-    private static abstract class DatabaseAsyncTask<T> extends AsyncTask<Void, Void, T> {
-
-        private DatabaseHandler<T> handler;
-        private RuntimeException error;
-
-        public DatabaseAsyncTask(DatabaseHandler<T> handler) {
-            this.handler = handler;
-        }
-
-        @Override
-        protected T doInBackground(Void... params) {
-            try {
-                return executeMethod();
-            } catch (RuntimeException error) {
-                this.error = error;
-                return null;
-            }
-        }
-
-        protected abstract T executeMethod();
-
-        @Override
-        protected void onPostExecute(T result) {
-            handler.onComplete(error == null, result);
-        }
-    }
-
     private SQLiteDatabase db;
 
     public DatabaseHelper(Context context) {
@@ -164,6 +132,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 return null;
             }
         }.execute();
+    }
+
+    public interface DatabaseHandler<T> {
+        void onComplete(boolean success, T result);
+    }
+
+    private static abstract class DatabaseAsyncTask<T> extends AsyncTask<Void, Void, T> {
+
+        private DatabaseHandler<T> handler;
+        private RuntimeException error;
+
+        public DatabaseAsyncTask(DatabaseHandler<T> handler) {
+            this.handler = handler;
+        }
+
+        @Override
+        protected T doInBackground(Void... params) {
+            try {
+                return executeMethod();
+            } catch (RuntimeException error) {
+                this.error = error;
+                return null;
+            }
+        }
+
+        protected abstract T executeMethod();
+
+        @Override
+        protected void onPostExecute(T result) {
+            handler.onComplete(error == null, result);
+        }
     }
 
 }

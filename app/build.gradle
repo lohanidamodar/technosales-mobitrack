@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 3
         targetSdkVersion 23
-        versionCode 27
-        versionName '3.7'
+        versionCode 1
+        versionName '1.0'
     }
 
     signingConfigs {
@@ -22,11 +22,11 @@ android {
 
     productFlavors {
         regular {
-            applicationId "org.traccar.client"
+            applicationId "com.technosales.mobitrack"
             buildConfigField "boolean", "HIDDEN_APP", "false"
         }
         hidden {
-            applicationId "org.traccar.client.hidden"
+            applicationId "com.technosales.mobitrack.hidden"
             buildConfigField "boolean", "HIDDEN_APP", "true"
         }
     }

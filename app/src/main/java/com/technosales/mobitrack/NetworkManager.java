@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.traccar.client;
+package com.technosales.mobitrack;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -35,10 +35,6 @@ public class NetworkManager extends BroadcastReceiver {
         this.context = context;
         this.handler = handler;
         connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-    }
-
-    public interface NetworkHandler {
-        void onNetworkUpdate(boolean isOnline);
     }
 
     public boolean isOnline() {
@@ -63,6 +59,10 @@ public class NetworkManager extends BroadcastReceiver {
             Log.i(TAG, "network " + (isOnline ? "on" : "off"));
             handler.onNetworkUpdate(isOnline);
         }
+    }
+
+    public interface NetworkHandler {
+        void onNetworkUpdate(boolean isOnline);
     }
 
 }

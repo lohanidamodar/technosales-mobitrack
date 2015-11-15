@@ -1,7 +1,10 @@
 
-package org.traccar.client;
+package org.traccar.mobitrack;
 
 import android.location.Location;
+
+import com.technosales.mobitrack.Position;
+import com.technosales.mobitrack.ProtocolFormatter;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

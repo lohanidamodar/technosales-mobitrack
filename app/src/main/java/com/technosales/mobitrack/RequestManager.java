@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.traccar.client;
+package com.technosales.mobitrack;
 
 import android.os.AsyncTask;
 
@@ -25,29 +25,6 @@ import java.net.URL;
 public class RequestManager {
 
     private static final int TIMEOUT = 15 * 1000;
-
-    public interface RequestHandler {
-        void onComplete(boolean success);
-    }
-
-    private static class RequestAsyncTask extends AsyncTask<String, Void, Boolean> {
-
-        private RequestHandler handler;
-
-        public RequestAsyncTask(RequestHandler handler) {
-            this.handler = handler;
-        }
-
-        @Override
-        protected Boolean doInBackground(String... request) {
-            return sendRequest(request[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            handler.onComplete(result);
-        }
-    }
 
     public static boolean sendRequest(String request) {
         InputStream inputStream = null;
@@ -76,6 +53,29 @@ public class RequestManager {
     public static void sendRequestAsync(String request, RequestHandler handler) {
         RequestAsyncTask task = new RequestAsyncTask(handler);
         task.execute(request);
+    }
+
+    public interface RequestHandler {
+        void onComplete(boolean success);
+    }
+
+    private static class RequestAsyncTask extends AsyncTask<String, Void, Boolean> {
+
+        private RequestHandler handler;
+
+        public RequestAsyncTask(RequestHandler handler) {
+            this.handler = handler;
+        }
+
+        @Override
+        protected Boolean doInBackground(String... request) {
+            return sendRequest(request[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            handler.onComplete(result);
+        }
     }
 
 }

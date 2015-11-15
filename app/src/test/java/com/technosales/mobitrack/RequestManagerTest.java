@@ -1,5 +1,7 @@
 
-package org.traccar.client;
+package org.traccar.mobitrack;
+
+import com.technosales.mobitrack.RequestManager;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

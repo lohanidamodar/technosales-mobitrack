@@ -1,8 +1,11 @@
 
-package org.traccar.client;
+package org.traccar.mobitrack;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+
+import com.technosales.mobitrack.DatabaseHelper;
+import com.technosales.mobitrack.Position;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

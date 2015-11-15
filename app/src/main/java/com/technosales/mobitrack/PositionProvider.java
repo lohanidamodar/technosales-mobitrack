@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.traccar.client;
+package com.technosales.mobitrack;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -30,21 +30,13 @@ import android.util.Log;
 public abstract class PositionProvider {
 
     protected static final String TAG = PositionProvider.class.getSimpleName();
-
-    public interface PositionListener {
-        void onPositionUpdate(Position position);
-    }
-
+    protected final LocationManager locationManager;
+    protected final long period;
     private final PositionListener listener;
-
     private final Context context;
     private final SharedPreferences preferences;
-    protected final LocationManager locationManager;
-
-    private String deviceId;
     protected String type;
-    protected final long period;
-
+    private String deviceId;
     private long lastUpdateTime;
 
     public PositionProvider(Context context, PositionListener listener) {
@@ -84,6 +76,10 @@ public abstract class PositionProvider {
         } else {
             return 0;
         }
+    }
+
+    public interface PositionListener {
+        void onPositionUpdate(Position position);
     }
 
 }

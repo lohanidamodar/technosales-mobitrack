@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.traccar.client;
+package com.technosales.mobitrack.hidden;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import com.technosales.mobitrack.MainActivity;
 
 public class DialLaunchReceiver extends BroadcastReceiver {
 

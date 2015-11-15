@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.traccar.client;
+package com.technosales.mobitrack;
 
 import android.annotation.TargetApi;
 import android.app.Notification;
@@ -23,7 +23,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.lang.reflect.InvocationTargetException;
@@ -58,26 +57,6 @@ public class TrackingService extends Service {
         }
 
         return notification;
-    }
-
-    @TargetApi(Build.VERSION_CODES.ECLAIR)
-    public static class HideNotificationService extends Service {
-        @Override
-        public IBinder onBind(Intent intent) {
-            return null;
-        }
-
-        @Override
-        public void onCreate() {
-            startForeground(NOTIFICATION_ID, createNotification(this));
-            stopForeground(true);
-        }
-
-        @Override
-        public int onStartCommand(Intent intent, int flags, int startId) {
-            stopSelfResult(startId);
-            return START_NOT_STICKY;
-        }
     }
 
     @Override
@@ -125,6 +104,26 @@ public class TrackingService extends Service {
 
         if (trackingController != null) {
             trackingController.stop();
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.ECLAIR)
+    public static class HideNotificationService extends Service {
+        @Override
+        public IBinder onBind(Intent intent) {
+            return null;
+        }
+
+        @Override
+        public void onCreate() {
+            startForeground(NOTIFICATION_ID, createNotification(this));
+            stopForeground(true);
+        }
+
+        @Override
+        public int onStartCommand(Intent intent, int flags, int startId) {
+            stopSelfResult(startId);
+            return START_NOT_STICKY;
         }
     }
 

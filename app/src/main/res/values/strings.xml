@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Traccar Client</string>
+    <string name="app_name">Mobitrack</string>
     <string name="app_logo">Traccar</string>
 
     <string name="settings_id_title">Device identifier</string>

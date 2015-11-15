@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.traccar.client;
+package com.technosales.mobitrack;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -44,20 +44,6 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
 
     private PowerManager.WakeLock wakeLock;
 
-    private void lock() {
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
-            wakeLock.acquire();
-        } else {
-            wakeLock.acquire(WAKE_LOCK_TIMEOUT);
-        }
-    }
-
-    private void unlock() {
-        if (wakeLock.isHeld()) {
-            wakeLock.release();
-        }
-    }
-
     public TrackingController(Context context) {
         this.context = context;
         handler = new Handler();
@@ -76,6 +62,20 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
 
         PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
+    }
+
+    private void lock() {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
+            wakeLock.acquire();
+        } else {
+            wakeLock.acquire(WAKE_LOCK_TIMEOUT);
+        }
+    }
+
+    private void unlock() {
+        if (wakeLock.isHeld()) {
+            wakeLock.release();
+        }
     }
 
     public void start() {
