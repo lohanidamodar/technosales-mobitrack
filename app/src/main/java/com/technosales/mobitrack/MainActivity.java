@@ -123,6 +123,11 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
         } else if (key.equals(KEY_DEVICE)) {
             findPreference(KEY_DEVICE).setSummary(sharedPreferences.getString(KEY_DEVICE, null));
         }
+        findPreference(KEY_DEVICE).setSummary(sharedPreferences.getString(KEY_DEVICE, null));
+        findPreference(KEY_ADDRESS).setSummary(sharedPreferences.getString(KEY_ADDRESS, null));
+        findPreference(KEY_PORT).setSummary(sharedPreferences.getString(KEY_PORT, null));
+        findPreference(KEY_INTERVAL).setSummary(sharedPreferences.getString(KEY_INTERVAL, null));
+        findPreference(KEY_PROVIDER).setSummary(sharedPreferences.getString(KEY_PROVIDER, null));
     }
 
     @Override
@@ -152,6 +157,10 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
             ((EditTextPreference) findPreference(KEY_DEVICE)).setText(id);
         }
         findPreference(KEY_DEVICE).setSummary(sharedPreferences.getString(KEY_DEVICE, null));
+        findPreference(KEY_ADDRESS).setSummary(sharedPreferences.getString(KEY_ADDRESS, null));
+        findPreference(KEY_PORT).setSummary(sharedPreferences.getString(KEY_PORT, null));
+        findPreference(KEY_INTERVAL).setSummary(sharedPreferences.getString(KEY_INTERVAL, null));
+        findPreference(KEY_PROVIDER).setSummary(sharedPreferences.getString(KEY_PROVIDER, null));
     }
 
     private void startTrackingService(boolean checkPermission, boolean permission) {
