@@ -15,7 +15,7 @@
         android:title="@string/settings_id_title" />
 
     <EditTextPreference
-        android:defaultValue="demo.traccar.org"
+        android:defaultValue="202.52.240.146"
         android:key="address"
         android:summary="@string/settings_address_summary"
         android:title="@string/settings_address_title" />
