@@ -18,6 +18,7 @@ package com.technosales.mobitrack;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -30,12 +31,16 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.TwoStatePreference;
+import android.telephony.TelephonyManager;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
@@ -106,8 +111,6 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
     private void setPreferencesEnabled(boolean enabled) {
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         preferenceScreen.findPreference(KEY_DEVICE).setEnabled(enabled);
-        preferenceScreen.findPreference(KEY_ADDRESS).setEnabled(enabled);
-        preferenceScreen.findPreference(KEY_PORT).setEnabled(enabled);
         preferenceScreen.findPreference(KEY_INTERVAL).setEnabled(enabled);
         preferenceScreen.findPreference(KEY_PROVIDER).setEnabled(enabled);
     }
@@ -149,12 +152,19 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
     }
 
     private void initPreferences() {
+        findPreference(KEY_ADDRESS).setEnabled(false);
+        findPreference(KEY_PORT).setEnabled(false);
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
+
         if (!sharedPreferences.contains(KEY_DEVICE)) {
-            String id = String.valueOf(new Random().nextInt(900000) + 100000);
-            sharedPreferences.edit().putString(KEY_DEVICE, id).commit();
-            ((EditTextPreference) findPreference(KEY_DEVICE)).setText(id);
+            TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+            String number = tm.getLine1Number();
+            if (number == null) {
+                number = "98510";
+            }
+            sharedPreferences.edit().putString(KEY_DEVICE, number).commit();
+            ((EditTextPreference) findPreference(KEY_DEVICE)).setText(number);
         }
         findPreference(KEY_DEVICE).setSummary(sharedPreferences.getString(KEY_DEVICE, null));
         findPreference(KEY_ADDRESS).setSummary(sharedPreferences.getString(KEY_ADDRESS, null));
@@ -181,20 +191,28 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
         }
 
         if (permission) {
-            setPreferencesEnabled(false);
-            startService(new Intent(this, TrackingService.class));
-        } else {
-            sharedPreferences.edit().putBoolean(KEY_STATUS, false).commit();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                TwoStatePreference preference = (TwoStatePreference) findPreference(KEY_STATUS);
-                preference.setChecked(false);
+            if (isValidMobile(sharedPreferences.getString(KEY_DEVICE, null))) {
+                setPreferencesEnabled(false);
+                startService(new Intent(this, TrackingService.class));
             } else {
-                CheckBoxPreference preference = (CheckBoxPreference) findPreference(KEY_STATUS);
-                preference.setChecked(false);
+                Toast.makeText(this, "Invalid mobile number, please enter your number", Toast.LENGTH_SHORT).show();
+                showInputMobileDialog();
             }
+        } else {
+            errorStartingTrackingService();
         }
     }
 
+    private void errorStartingTrackingService() {
+        sharedPreferences.edit().putBoolean(KEY_STATUS, false).commit();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            TwoStatePreference preference = (TwoStatePreference) findPreference(KEY_STATUS);
+            preference.setChecked(false);
+        } else {
+            CheckBoxPreference preference = (CheckBoxPreference) findPreference(KEY_STATUS);
+            preference.setChecked(false);
+        }
+    }
     private void stopTrackingService() {
         stopService(new Intent(this, TrackingService.class));
         setPreferencesEnabled(true);
@@ -206,6 +224,54 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
             startTrackingService(false, grantResults[0] == PackageManager.PERMISSION_GRANTED &&
                     (permissions.length < 2 || grantResults[1] == PackageManager.PERMISSION_GRANTED));
         }
+    }
+
+    private boolean isValidMobile(String phone) {
+        boolean check = false;
+        if (!Pattern.matches("[a-zA-Z]+", phone)) {
+            if (phone.length() != 10) {
+                check = false;
+            } else {
+                if (phone.charAt(0) != '9' || (phone.charAt(1) != '8' && phone.charAt(1) != '7'))
+                    check = false;
+                else
+                    check = true;
+            }
+        } else {
+            check = false;
+        }
+        return check;
+    }
+
+    private void showInputMobileDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Mobile Number");
+
+// Set up the input
+        final EditText input = new EditText(this);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_PHONE);
+        builder.setView(input);
+
+// Set up the buttons
+        builder.setPositiveButton("SET", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String phone = input.getText().toString();
+                sharedPreferences.edit().putString(KEY_DEVICE, phone).commit();
+                findPreference(KEY_DEVICE).setSummary(sharedPreferences.getString(KEY_DEVICE, null));
+                startTrackingService(true, false);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                errorStartingTrackingService();
+            }
+        });
+
+        builder.show();
     }
 
 }
