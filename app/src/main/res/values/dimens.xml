@@ -2,4 +2,6 @@
 <resources>
     <dimen name="about_margin">20dp</dimen>
     <dimen name="about_spacing">15dp</dimen>
+    <dimen name="schedule_text_padding">8dp</dimen>
+    <dimen name="activity_padding">8dp</dimen>
 </resources>

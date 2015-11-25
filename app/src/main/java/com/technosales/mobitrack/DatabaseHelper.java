@@ -23,7 +23,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -48,12 +50,79 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "speed REAL," +
                 "course REAL," +
                 "battery REAL)");
+        db.execSQL("CREATE TABLE schedule (" +
+                "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "day INTEGER," +
+                "stopHour INTEGER," +
+                "stopMinute INTEGER," +
+                "startHour INTEGER," +
+                "startMinute INTEGER)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS position;");
+        db.execSQL("DROP TABLE IF EXISTS schedule;");
         onCreate(db);
+    }
+
+
+    public void insertSchedule(Schedule schedule) {
+        ContentValues values = new ContentValues();
+        values.put("day", schedule.getDay());
+        values.put("startHour", schedule.getStartHour());
+        values.put("startMinute", schedule.getStartMinute());
+        values.put("stopHour", schedule.getStopHour());
+        values.put("stopMinute", schedule.getStopMinute());
+        db.insertOrThrow("schedule", null, values);
+    }
+
+    public void insertScheduleAsync(final Schedule schedule, DatabaseHandler<Void> handler) {
+        new DatabaseAsyncTask<Void>(handler) {
+            @Override
+            protected Void executeMethod() {
+                insertSchedule(schedule);
+                return null;
+            }
+        }.execute();
+    }
+
+    public List<Schedule> selectDaySchedule(int day) {
+        List<Schedule> scheduleList = new ArrayList<Schedule>();
+        Cursor cursor = db.rawQuery("SELECT * FROM schedule ORDER BY startHour, startMinute WHERE day=" + day + ";", null);
+        try {
+            if (cursor.getCount() > 0) {
+
+                cursor.moveToFirst();
+                while (cursor.moveToNext()) {
+                    Schedule schedule = new Schedule();
+                    schedule.setId(cursor.getLong(cursor.getColumnIndex("_id")));
+                    schedule.setDay(cursor.getInt(cursor.getColumnIndex("day")));
+                    schedule.setStartHour(cursor.getInt(cursor.getColumnIndex("startHour")));
+                    schedule.setStartMinute(cursor.getInt(cursor.getColumnIndex("startMinute")));
+                    schedule.setStopHour(cursor.getInt(cursor.getColumnIndex("stopHour")));
+                    schedule.setStopMinute(cursor.getInt(cursor.getColumnIndex("stopMinute")));
+                    scheduleList.add(schedule);
+                }
+
+
+            } else {
+                return null;
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return scheduleList;
+    }
+
+    public void selectDayScheduleAsync(final int day, DatabaseHandler<List<Schedule>> handler) {
+        new DatabaseAsyncTask<List<Schedule>>(handler) {
+            @Override
+            protected List<Schedule> executeMethod() {
+                return selectDaySchedule(day);
+            }
+        }.execute();
     }
 
     public void insertPosition(Position position) {
@@ -119,7 +188,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void deletePosition(long id) {
-        if (db.delete("position", "id = ?", new String[] { String.valueOf(id) }) != 1) {
+        if (db.delete("position", "id = ?", new String[]{String.valueOf(id)}) != 1) {
             throw new SQLException();
         }
     }

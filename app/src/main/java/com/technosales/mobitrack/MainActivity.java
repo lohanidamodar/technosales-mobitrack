@@ -40,7 +40,6 @@ import android.widget.Toast;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
@@ -100,6 +99,13 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
     protected void onResume() {
         super.onResume();
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            TwoStatePreference preference = (TwoStatePreference) findPreference(KEY_STATUS);
+            preference.setChecked(sharedPreferences.getBoolean(KEY_STATUS, false));
+        } else {
+            CheckBoxPreference preference = (CheckBoxPreference) findPreference(KEY_STATUS);
+            preference.setChecked(sharedPreferences.getBoolean(KEY_STATUS, false));
+        }
     }
 
     @Override
@@ -147,6 +153,9 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
         } else if (item.getItemId() == R.id.about) {
             startActivity(new Intent(this, AboutActivity.class));
             return true;
+        } else if (item.getItemId() == R.id.schedule) {
+            startActivity(new Intent(this, ScheduleActivity.class));
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -191,7 +200,7 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
         }
 
         if (permission) {
-            if (isValidMobile(sharedPreferences.getString(KEY_DEVICE, null))) {
+            if (Utils.isValidMobile(sharedPreferences.getString(KEY_DEVICE, null))) {
                 setPreferencesEnabled(false);
                 startService(new Intent(this, TrackingService.class));
             } else {
@@ -226,22 +235,6 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
         }
     }
 
-    private boolean isValidMobile(String phone) {
-        boolean check = false;
-        if (!Pattern.matches("[a-zA-Z]+", phone)) {
-            if (phone.length() != 10) {
-                check = false;
-            } else {
-                if (phone.charAt(0) != '9' || (phone.charAt(1) != '8' && phone.charAt(1) != '7'))
-                    check = false;
-                else
-                    check = true;
-            }
-        } else {
-            check = false;
-        }
-        return check;
-    }
 
     private void showInputMobileDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

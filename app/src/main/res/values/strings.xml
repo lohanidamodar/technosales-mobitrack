@@ -2,9 +2,9 @@
 <resources>
 
     <string name="app_name">Mobitrack</string>
-    <string name="app_logo">Traccar</string>
+    <string name="app_logo">Mobitrack</string>
 
-    <string name="settings_id_title">Device identifier</string>
+    <string name="settings_id_title">Mobile Number</string>
     <string name="settings_address_title">Server address</string>
     <string name="settings_address_summary">Domain name or IP address</string>
     <string name="settings_port_title">Server port</string>
@@ -22,6 +22,15 @@
         <item>GPS provider</item>
         <item>Network provider</item>
         <item>Mixed provider</item>
+    </string-array>
+    <string-array name="days">
+        <item>Sunday</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
     </string-array>
     <string name="settings_foreground_title">Foreground service</string>
     <string name="settings_foreground_summary">Increase service priority</string>
@@ -41,6 +50,11 @@
     <string name="status_connectivity_change">Connectivity change</string>
 
     <string name="hidden_app_name">Device Settings</string>
-    <string name="hidden_alert">The app has been hidden. To open it again please dial 8722227 (TRACCAR).</string>
+    <string name="hidden_alert">The app has been hidden. To open it again please dial 8722227 (MOBITRACK).</string>
+    <string name="scheduling_label">Scheduling</string>
+    <string name="add_schedule_label">Add Schedule</string>
+    <string name="save_label">Save</string>
+    <string name="msg_failed_save_schedule">Sorry, we were unable to save schedule, please try again.</string>
+    <string name="msg_success_save_schedule">Schedule successfully saved</string>
 
 </resources>
