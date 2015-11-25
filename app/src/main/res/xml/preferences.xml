@@ -9,6 +9,7 @@
         android:title="@string/settings_status_title" />
 
     <EditTextPreference
+        android:inputType="phone"
         android:key="id"
         android:title="@string/settings_id_title" />
 
