@@ -39,9 +39,10 @@
     <string name="menu_about">About</string>
     <string name="menu_clear">Clear</string>
     
-    <string name="about_description">Real time GPS tracker for Android devices. Compatible with Traccar Server and other tracking systems.</string>
-    <string name="about_license">This application is free and open source, source code is licensed under Apache License Version 2.0 and available on GitHub.</string>
-    <string name="about_web">For more information visit\nwww.traccar.org/client</string>
+    <string name="about_description">Techno Mobitrack GPS tracker is the easiest ever tracking application. Tracking of marketing staffs, children, spouse, expedition trekkers etc from strong tracking platform
+Just install and register to our tracking (server) http://202.52.240.149:8082 .Use your mobile number as device ID. Data transfer using wifi or GPRS as per your need.</string>
+    <string name="about_license">©Technology sales Pvt Ltd (www.technosales.com.np) all right reserved</string>
+    <string name="about_web">www.technosales.com.np</string>
 
     <string name="status_service_create">Service created</string>
     <string name="status_service_destroy">Service destroyed</string>

@@ -2,24 +2,26 @@ package com.technosales.mobitrack;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.Spinner;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by dlohani on 11/23/15.
@@ -30,13 +32,13 @@ public class AddScheduleActivity extends Activity implements TimePickerDialog.On
     private static final String TAG = AddScheduleActivity.class.getSimpleName();
     private static final int TIME_TYPE_START = 1;
     private static final int TIME_TYPE_STOP = 2;
+    LinearLayout llDays, llStart, llStop;
     private int startHour, startMinute, stopHour, stopMinute, day = 1;
     private int timeType;
-    private ImageButton ibStartTime, ibStopTime;
-    private TextView tvStartTime, tvStopTime;
+    private List<Integer> days = new ArrayList<>();
+    private TextView tvDays, tvStart, tvStop;
     private Button btnSave;
-    private Spinner spDay;
-
+    private String[] dayNames = new String[]{"SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"};
     @Override
     public void onCreate(Bundle savedInstanceBundle) {
         super.onCreate(savedInstanceBundle);
@@ -50,25 +52,23 @@ public class AddScheduleActivity extends Activity implements TimePickerDialog.On
     }
 
     private void initialize() {
-        spDay = (Spinner) findViewById(R.id.spDay);
-        if (day != 1) {
-            spDay.setSelection(day - 1);
-        }
-        spDay.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        llDays = (LinearLayout) findViewById(R.id.llDays);
+        llStart = (LinearLayout) findViewById(R.id.llStart);
+        llStop = (LinearLayout) findViewById(R.id.llStop);
+        tvStart = (TextView) findViewById(R.id.tvStart);
+        tvStop = (TextView) findViewById(R.id.tvStop);
+        tvDays = (TextView) findViewById(R.id.tvDays);
+        llDays.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                day = position + 1;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onClick(View v) {
+                showDaysChooser();
             }
         });
 
+        days.add(day);
 
-        tvStartTime = (TextView) findViewById(R.id.tvStartTime);
-        tvStopTime = (TextView) findViewById(R.id.tvStopTime);
+        displayDays();
+
 
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
@@ -78,19 +78,17 @@ public class AddScheduleActivity extends Activity implements TimePickerDialog.On
         stopMinute = startMinute;
 
 
-        setTime(startHour, startMinute, tvStartTime);
-        setTime(stopHour, stopMinute, tvStopTime);
+        setTime(startHour, startMinute, tvStart);
+        setTime(stopHour, stopMinute, tvStop);
 
-        ibStartTime = (ImageButton) findViewById(R.id.ibStartTime);
-        ibStopTime = (ImageButton) findViewById(R.id.ibStopTime);
-        ibStartTime.setOnClickListener(new View.OnClickListener() {
+        llStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 timeType = TIME_TYPE_START;
                 showTimeDialog(startHour, startMinute);
             }
         });
-        ibStopTime.setOnClickListener(new View.OnClickListener() {
+        llStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 timeType = TIME_TYPE_STOP;
@@ -101,23 +99,78 @@ public class AddScheduleActivity extends Activity implements TimePickerDialog.On
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Schedule schedule = new Schedule(day, startHour, startMinute, stopHour, stopMinute);
-                ContentValues values = new ContentValues();
-                values.put("day", schedule.getDay());
-                values.put("startHour", schedule.getStartHour());
-                values.put("startMinute", schedule.getStartMinute());
-                values.put("stopHour", schedule.getStopHour());
-                values.put("stopMinute", schedule.getStopMinute());
-                Uri inserted = getContentResolver().insert(MobitrackContentProvider.SCHEDULES_URI, values);
-                if (inserted != null) {
-                    Toast.makeText(getApplicationContext(), getString(R.string.msg_success_save_schedule), Toast.LENGTH_SHORT).show();
-                    setIntentForSchedule((int) ContentUris.parseId(inserted));
-                    finish();
-                } else {
-                    Toast.makeText(getApplicationContext(), getString(R.string.msg_failed_save_schedule), Toast.LENGTH_SHORT).show();
+                if (days.size() < 1) {
+                    Toast.makeText(getApplicationContext(), "Cannot save, please select at least one day.", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+                for (int curDay : days) {
+                    final Schedule schedule = new Schedule(curDay, startHour, startMinute, stopHour, stopMinute);
+                    ContentValues values = new ContentValues();
+                    values.put("day", schedule.getDay());
+                    values.put("startHour", schedule.getStartHour());
+                    values.put("startMinute", schedule.getStartMinute());
+                    values.put("stopHour", schedule.getStopHour());
+                    values.put("stopMinute", schedule.getStopMinute());
+                    Uri inserted = getContentResolver().insert(MobitrackContentProvider.SCHEDULES_URI, values);
+                    if (inserted != null) {
+                        Toast.makeText(getApplicationContext(), getString(R.string.msg_success_save_schedule), Toast.LENGTH_SHORT).show();
+                        setIntentForSchedule((int) ContentUris.parseId(inserted));
+                    } else {
+                        Toast.makeText(getApplicationContext(), getString(R.string.msg_failed_save_schedule), Toast.LENGTH_SHORT).show();
+                        break;
+                    }
+                }
+                finish();
             }
         });
+    }
+
+    private void showDaysChooser() {
+        final List<Integer> selected = days;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose days to set the schedule for")
+                .setMultiChoiceItems(R.array.days, getCheckedItems(), new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        if (isChecked) {
+                            // If the user checked the item, add it to the selected items
+                            selected.add(which);
+                        } else if (days.contains(which)) {
+                            // Else, if the item is already in the array, remove it
+                            selected.remove(Integer.valueOf(which));
+                        }
+
+                    }
+                })
+                .setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        days = selected;
+                        displayDays();
+                    }
+                });
+        builder.create().show();
+    }
+
+    private boolean[] getCheckedItems() {
+        boolean[] checkedItems = new boolean[7];
+        for (int day : days)
+            checkedItems[day] = true;
+        return checkedItems;
+    }
+
+    private void displayDays() {
+        if (days.size() < 1) {
+            tvDays.setText("Please select at least one day");
+            return;
+        }
+        String dayCaption = "";
+        for (int day : days) {
+            dayCaption += dayNames[day] + ", ";
+        }
+        Log.d(TAG, dayCaption);
+        dayCaption = dayCaption.substring(0, dayCaption.length() - 2);
+        tvDays.setText(dayCaption);
     }
 
     private void setIntentForSchedule(int id) {
@@ -158,12 +211,12 @@ public class AddScheduleActivity extends Activity implements TimePickerDialog.On
             case TIME_TYPE_START:
                 startHour = hourOfDay;
                 startMinute = minute;
-                setTime(startHour, startMinute, tvStartTime);
+                setTime(startHour, startMinute, tvStart);
                 break;
             case TIME_TYPE_STOP:
                 stopHour = hourOfDay;
                 stopMinute = minute;
-                setTime(stopHour, stopMinute, tvStopTime);
+                setTime(stopHour, stopMinute, tvStop);
                 break;
         }
     }

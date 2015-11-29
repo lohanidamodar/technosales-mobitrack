@@ -1,81 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="@dimen/activity_padding">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Day"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <Spinner
-        android:id="@+id/spDay"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:entries="@array/days" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Start Time: "
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/llDays"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="@drawable/primary_selector"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:padding="@dimen/activity_padding">
 
         <TextView
-            android:id="@+id/tvStartTime"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:clickable="false"
+            android:text="Days"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <ImageButton
-            android:id="@+id/ibStartTime"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/tvDays"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:src="@drawable/ic_edit" />
+            android:clickable="false"
+            android:text="Today" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView3"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Stop Time: "
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
+        android:layout_height="1dp"
+        android:background="@color/lighter_gray" />
     <LinearLayout
+        android:id="@+id/llStart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="@drawable/primary_selector"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:padding="@dimen/activity_padding">
 
         <TextView
-            android:id="@+id/tvStopTime"
+            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:text="Start Time: "
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <ImageButton
-
-            android:id="@+id/ibStopTime"
+        <TextView
+            android:id="@+id/tvStart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:src="@drawable/ic_edit" />
+            android:textAppearance="?android:attr/textAppearanceLarge" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lighter_gray" />
+    <LinearLayout
+        android:id="@+id/llStop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/primary_selector"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:padding="@dimen/activity_padding">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop Time: "
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/tvStop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lighter_gray" />
 
     <Button
         android:id="@+id/btnSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_padding"
         android:text="@string/save_label" />
 
 </LinearLayout>
