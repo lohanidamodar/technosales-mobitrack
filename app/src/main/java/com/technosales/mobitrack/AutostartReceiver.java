@@ -30,7 +30,7 @@ public class AutostartReceiver extends WakefulBroadcastReceiver {
             startWakefulService(context, new Intent(context, TrackingService.class));
         }
         if (sharedPreferences.getBoolean(ScheduleActivity.KEY_SCHEDULING, false)) {
-            //set all alarms from schedule
+            Utils.scheduling(true, context);
         }
     }
 
