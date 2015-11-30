@@ -86,7 +86,7 @@ public class ViewScheduleActivity extends FragmentActivity
         switch (item.getItemId()) {
             case R.id.add_schedule:
                 Intent addSchedule = new Intent(this, AddScheduleActivity.class);
-                addSchedule.putExtra(ViewScheduleActivity.ARG_DAY, day);
+                addSchedule.putExtra(ViewScheduleActivity.ARG_DAY, day - 1);
                 startActivity(addSchedule);
                 return true;
         }

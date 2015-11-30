@@ -104,7 +104,7 @@ public class AddScheduleActivity extends Activity implements TimePickerDialog.On
                     return;
                 }
                 for (int curDay : days) {
-                    final Schedule schedule = new Schedule(curDay, startHour, startMinute, stopHour, stopMinute);
+                    final Schedule schedule = new Schedule(curDay + 1, startHour, startMinute, stopHour, stopMinute);
                     ContentValues values = new ContentValues();
                     values.put("day", schedule.getDay());
                     values.put("startHour", schedule.getStartHour());
