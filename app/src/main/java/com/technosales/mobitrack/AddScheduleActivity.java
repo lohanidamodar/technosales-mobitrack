@@ -9,6 +9,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -104,20 +105,25 @@ public class AddScheduleActivity extends Activity implements TimePickerDialog.On
                     return;
                 }
                 for (int curDay : days) {
-                    final Schedule schedule = new Schedule(curDay + 1, startHour, startMinute, stopHour, stopMinute);
-                    ContentValues values = new ContentValues();
-                    values.put("day", schedule.getDay());
-                    values.put("startHour", schedule.getStartHour());
-                    values.put("startMinute", schedule.getStartMinute());
-                    values.put("stopHour", schedule.getStopHour());
-                    values.put("stopMinute", schedule.getStopMinute());
-                    Uri inserted = getContentResolver().insert(MobitrackContentProvider.SCHEDULES_URI, values);
-                    if (inserted != null) {
-                        Toast.makeText(getApplicationContext(), getString(R.string.msg_success_save_schedule), Toast.LENGTH_SHORT).show();
-                        setIntentForSchedule((int) ContentUris.parseId(inserted), curDay + 1);
+                    if (getNumberOfSchedules(curDay + 1) < 5) {
+                        final Schedule schedule = new Schedule(curDay + 1, startHour, startMinute, stopHour, stopMinute);
+                        ContentValues values = new ContentValues();
+                        values.put("day", schedule.getDay());
+                        values.put("startHour", schedule.getStartHour());
+                        values.put("startMinute", schedule.getStartMinute());
+                        values.put("stopHour", schedule.getStopHour());
+                        values.put("stopMinute", schedule.getStopMinute());
+                        Uri inserted = getContentResolver().insert(MobitrackContentProvider.SCHEDULES_URI, values);
+                        if (inserted != null) {
+                            Toast.makeText(getApplicationContext(), getString(R.string.msg_success_save_schedule), Toast.LENGTH_SHORT).show();
+                            setIntentForSchedule((int) ContentUris.parseId(inserted), curDay + 1);
+                        } else {
+                            Toast.makeText(getApplicationContext(), getString(R.string.msg_failed_save_schedule), Toast.LENGTH_SHORT).show();
+                            break;
+                        }
                     } else {
-                        Toast.makeText(getApplicationContext(), getString(R.string.msg_failed_save_schedule), Toast.LENGTH_SHORT).show();
-                        break;
+                        Toast.makeText(getApplicationContext(), "Cannot save schedule for " + dayNames[curDay] + ", only 5 schedules allowed.", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "failed to add schedule due to max for " + dayNames[curDay]);
                     }
                 }
                 finish();
@@ -218,5 +224,16 @@ public class AddScheduleActivity extends Activity implements TimePickerDialog.On
                 setTime(stopHour, stopMinute, tvStop);
                 break;
         }
+    }
+
+    private int getNumberOfSchedules(int day) {
+        String[] projection = {"_id", "day", "startHour", "startMinute", "stopHour", "stopMinute"};
+        String selection = "day=?";
+        String[] selection_arguments = new String[]{String.valueOf(day)};
+        Cursor cursor = getContentResolver().query(MobitrackContentProvider.SCHEDULES_URI, projection, selection, selection_arguments, null);
+        if (cursor != null)
+            return cursor.getCount();
+        else
+            return 0;
     }
 }
