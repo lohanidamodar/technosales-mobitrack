@@ -33,7 +33,7 @@ public class AddScheduleActivity extends Activity implements TimePickerDialog.On
     private static final int TIME_TYPE_START = 1;
     private static final int TIME_TYPE_STOP = 2;
     LinearLayout llDays, llStart, llStop;
-    private int startHour, startMinute, stopHour, stopMinute, day = 1;
+    private int startHour, startMinute, stopHour, stopMinute, day = 0;
     private int timeType;
     private List<Integer> days = new ArrayList<>();
     private TextView tvDays, tvStart, tvStop;
@@ -45,7 +45,7 @@ public class AddScheduleActivity extends Activity implements TimePickerDialog.On
         setContentView(R.layout.add_schedule);
         Bundle args = getIntent().getExtras();
         if (args != null) {
-            day = args.getInt(ARG_DAY, 1);
+            day = args.getInt(ARG_DAY, 0);
         }
         initialize();
 
@@ -114,7 +114,7 @@ public class AddScheduleActivity extends Activity implements TimePickerDialog.On
                     Uri inserted = getContentResolver().insert(MobitrackContentProvider.SCHEDULES_URI, values);
                     if (inserted != null) {
                         Toast.makeText(getApplicationContext(), getString(R.string.msg_success_save_schedule), Toast.LENGTH_SHORT).show();
-                        setIntentForSchedule((int) ContentUris.parseId(inserted));
+                        setIntentForSchedule((int) ContentUris.parseId(inserted), curDay + 1);
                     } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.msg_failed_save_schedule), Toast.LENGTH_SHORT).show();
                         break;
@@ -168,12 +168,11 @@ public class AddScheduleActivity extends Activity implements TimePickerDialog.On
         for (int day : days) {
             dayCaption += dayNames[day] + ", ";
         }
-        Log.d(TAG, dayCaption);
         dayCaption = dayCaption.substring(0, dayCaption.length() - 2);
         tvDays.setText(dayCaption);
     }
 
-    private void setIntentForSchedule(int id) {
+    private void setIntentForSchedule(int id, int curDay) {
         AlarmManager alarmManager = (AlarmManager) this.getSystemService(ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReceiver.class);
         intent.setAction(AlarmReceiver.ACTION_START_SERVICE);
@@ -183,7 +182,7 @@ public class AddScheduleActivity extends Activity implements TimePickerDialog.On
         c.setTimeInMillis(System.currentTimeMillis());
         c.set(Calendar.HOUR_OF_DAY, startHour);
         c.set(Calendar.MINUTE, startMinute);
-        c.set(Calendar.DAY_OF_WEEK, day);
+        c.set(Calendar.DAY_OF_WEEK, curDay);
         Log.d(TAG, "Start time: " + c.getTime().toString());
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), interval, pendingIntent);
 
