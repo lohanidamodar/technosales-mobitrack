@@ -1,15 +1,20 @@
 package com.technosales.mobitrack;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -17,14 +22,17 @@ import android.widget.Switch;
 /**
  * Created by dlohani on 11/21/15.
  */
-public class ScheduleActivity extends Activity
-        implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class ScheduleActivity extends FragmentActivity
+        implements View.OnClickListener, AdapterView.OnItemClickListener,
+        LoaderManager.LoaderCallbacks<Cursor> {
     public static final String KEY_SCHEDULING = "scheduling";
     private static final String TAG = ScheduleActivity.class.getSimpleName();
     CheckBox cbSchedule;
     Switch swSchedule;
     SharedPreferences preferences;
     ListView lvDays;
+    ArrayAdapter<String> adapter;
+    String[] days;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +70,13 @@ public class ScheduleActivity extends Activity
     }
 
     private void configureListView() {
-        if (preferences.getBoolean(KEY_SCHEDULING, false))
+        days = getResources().getStringArray(R.array.days);
+        if (preferences.getBoolean(KEY_SCHEDULING, false)) {
             lvDays.setVisibility(View.VISIBLE);
+            getSupportLoaderManager().initLoader(0, null, this);
+            adapter = new DaysAdapter(this, android.R.layout.simple_list_item_1, days);
+            lvDays.setAdapter(adapter);
+        }
         else
             lvDays.setVisibility(View.GONE);
 
@@ -90,5 +103,31 @@ public class ScheduleActivity extends Activity
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = {"_id", "day", "startHour", "startMinute", "stopHour", "stopMinute"};
+        CursorLoader cursorLoader = new CursorLoader(this,
+                MobitrackContentProvider.SCHEDULES_URI, projection, null, null, "_id");
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (data != null) {
+            data.moveToFirst();
+            do {
+                Schedule schedule = Schedule.fromCursor(data);
+                days[schedule.getDay() - 1] += " <font color='green'>" + schedule.getStartHour() + ":" + schedule.getStartMinute() + "</font> - <font color='red'>" + schedule.getStopHour() + ":" + schedule.getStopMinute() + "</font>,";
+            } while (data.moveToNext());
+            adapter.notifyDataSetChanged();
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }
