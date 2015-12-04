@@ -46,7 +46,8 @@ public class DaysAdapter extends ArrayAdapter<String> {
         }
 
         String item = getItem(position);
-        item = item.substring(0, item.length() - 1);
+        if (item.charAt(item.length() - 1) == ',')
+            item = item.substring(0, item.length() - 1);
         text.setText(Html.fromHtml(item));
         return view;
     }

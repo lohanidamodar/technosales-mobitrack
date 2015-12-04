@@ -115,7 +115,7 @@ public class ScheduleActivity extends FragmentActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (data != null) {
+        if (data.getCount() > 0) {
             data.moveToFirst();
             do {
                 Schedule schedule = Schedule.fromCursor(data);
