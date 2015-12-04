@@ -83,7 +83,7 @@ public class MobitrackContentProvider extends ContentProvider {
             case SCHEDULE_ID:
                 checkCategoriesColumns(projection);
                 queryBuilder.setTables(SCHEDULES_PATH);
-                queryBuilder.appendWhere("id="
+                queryBuilder.appendWhere("_id="
                         + uri.getLastPathSegment());
                 break;
             default:
@@ -166,7 +166,7 @@ public class MobitrackContentProvider extends ContentProvider {
     }
 
     private void checkCategoriesColumns(String[] projection) {
-        String[] available = {"id", "day", "startHour", "startMinute", "stopHour", "stopMinute"};
+        String[] available = {"_id", "day", "startHour", "startMinute", "stopHour", "stopMinute"};
         if (projection != null) {
             HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
             HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(available));

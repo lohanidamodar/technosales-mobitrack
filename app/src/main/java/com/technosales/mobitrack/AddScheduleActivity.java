@@ -1,14 +1,11 @@
 package com.technosales.mobitrack;
 
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -116,7 +113,7 @@ public class AddScheduleActivity extends Activity implements TimePickerDialog.On
                         Uri inserted = getContentResolver().insert(MobitrackContentProvider.SCHEDULES_URI, values);
                         if (inserted != null) {
                             Toast.makeText(getApplicationContext(), getString(R.string.msg_success_save_schedule), Toast.LENGTH_SHORT).show();
-                            setIntentForSchedule((int) ContentUris.parseId(inserted), curDay + 1);
+                            setIntentForSchedule(ContentUris.parseId(inserted));
                         } else {
                             Toast.makeText(getApplicationContext(), getString(R.string.msg_failed_save_schedule), Toast.LENGTH_SHORT).show();
                             break;
@@ -178,26 +175,8 @@ public class AddScheduleActivity extends Activity implements TimePickerDialog.On
         tvDays.setText(dayCaption);
     }
 
-    private void setIntentForSchedule(int id, int curDay) {
-        AlarmManager alarmManager = (AlarmManager) this.getSystemService(ALARM_SERVICE);
-        Intent intent = new Intent(this, AlarmReceiver.class);
-        intent.setAction(AlarmReceiver.ACTION_START_SERVICE);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, id, intent, 0);
-        long interval = AlarmManager.INTERVAL_DAY * 7;
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(System.currentTimeMillis());
-        c.set(Calendar.HOUR_OF_DAY, startHour);
-        c.set(Calendar.MINUTE, startMinute);
-        c.set(Calendar.DAY_OF_WEEK, curDay);
-        Log.d(TAG, "Start time: " + c.getTime().toString());
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), interval, pendingIntent);
-
-        intent.setAction(AlarmReceiver.ACTION_STOP_SERVICE);
-        pendingIntent = PendingIntent.getBroadcast(this, id, intent, 0);
-        c.set(Calendar.HOUR_OF_DAY, stopHour);
-        c.set(Calendar.MINUTE, stopMinute);
-        Log.d(TAG, "Stop time: " + c.getTime().toString());
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), interval, pendingIntent);
+    private void setIntentForSchedule(long id) {
+        Utils.setScheduleAlarmForId(id, this);
     }
 
     private void showTimeDialog(int hour, int minute) {
