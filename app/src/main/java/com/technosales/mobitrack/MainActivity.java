@@ -30,7 +30,6 @@ import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.preference.TwoStatePreference;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
 import android.view.Menu;
@@ -99,13 +98,8 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
     protected void onResume() {
         super.onResume();
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            TwoStatePreference preference = (TwoStatePreference) findPreference(KEY_STATUS);
-            preference.setChecked(sharedPreferences.getBoolean(KEY_STATUS, false));
-        } else {
             CheckBoxPreference preference = (CheckBoxPreference) findPreference(KEY_STATUS);
             preference.setChecked(sharedPreferences.getBoolean(KEY_STATUS, false));
-        }
     }
 
     @Override
@@ -127,6 +121,7 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
             if (sharedPreferences.getBoolean(KEY_STATUS, false)) {
                 startTrackingService(true, false);
             } else {
+
                 stopTrackingService();
             }
         } else if (key.equals(KEY_DEVICE)) {
@@ -214,13 +209,8 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
 
     private void errorStartingTrackingService() {
         sharedPreferences.edit().putBoolean(KEY_STATUS, false).commit();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            TwoStatePreference preference = (TwoStatePreference) findPreference(KEY_STATUS);
-            preference.setChecked(false);
-        } else {
             CheckBoxPreference preference = (CheckBoxPreference) findPreference(KEY_STATUS);
             preference.setChecked(false);
-        }
     }
     private void stopTrackingService() {
         stopService(new Intent(this, TrackingService.class));
