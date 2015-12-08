@@ -21,6 +21,10 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
@@ -28,12 +32,21 @@ import android.util.Log;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class TrackingService extends Service {
+public class TrackingService extends Service implements SensorEventListener {
 
     private static final String TAG = TrackingService.class.getSimpleName();
     private static final int NOTIFICATION_ID = 1;
 
     private TrackingController trackingController;
+
+    private SensorManager sensorManager;
+    private Sensor mAccelerationSensor;
+    private long lastSensorUpdate = 0;
+    private float[] mGravity = new float[3];
+    private float mAccelCurrent = SensorManager.GRAVITY_EARTH;
+    private float mAccelLast = SensorManager.GRAVITY_EARTH;
+    private float mAccel = 0.00f;
+    private boolean trackingStopped = false;
 
     @SuppressWarnings("deprecation")
     private static Notification createNotification(Context context) {
@@ -63,6 +76,14 @@ public class TrackingService extends Service {
     public void onCreate() {
         Log.i(TAG, "service create");
         StatusActivity.addMessage(getString(R.string.status_service_create));
+
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        if (mAccelerationSensor != null) {
+            sensorManager.registerListener(this, mAccelerationSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            lastSensorUpdate = System.currentTimeMillis();
+        } else
+            Log.d(TAG, "Sorry, Accelerometer not found.");
 
         trackingController = new TrackingController(this);
         trackingController.start();
@@ -102,9 +123,52 @@ public class TrackingService extends Service {
             stopForeground(true);
         }
 
-        if (trackingController != null) {
+        if (trackingController != null && !trackingStopped) {
             trackingController.stop();
         }
+        sensorManager.unregisterListener(this);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        Sensor mySensor = event.sensor;
+        if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            mGravity = event.values.clone();
+            float x = mGravity[0];
+            float y = mGravity[1];
+            float z = mGravity[2];
+            mAccelLast = mAccelCurrent;
+            mAccelCurrent = (float) Math.sqrt(x * x + y * y + z * z);
+            float delta = mAccelCurrent - mAccelLast;
+            mAccel = mAccel * 0.9f + delta;
+            // Make this higher or lower according to how much
+            // motion you want to detect
+            if (mAccel > 1) {
+                // do something
+                lastSensorUpdate = System.currentTimeMillis();
+                if (trackingStopped) {
+                    StatusActivity.addMessage("Device moved, starting location tracking");
+                    Log.d(TAG, "Device moved");
+                    trackingController.start();
+                    trackingStopped = false;
+                }
+            } else {
+                if ((System.currentTimeMillis() - lastSensorUpdate) > 30000) {
+                    if (trackingController != null && !trackingStopped) {
+                        StatusActivity.addMessage("Device was motionless for 30 seconds, stopping location tracking");
+                        Log.d(TAG, "device not moving for 30 seconds");
+                        trackingController.stop();
+                        trackingStopped = true;
+                    }
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 
     @TargetApi(Build.VERSION_CODES.ECLAIR)
