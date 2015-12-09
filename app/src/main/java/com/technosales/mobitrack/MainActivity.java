@@ -112,7 +112,6 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         preferenceScreen.findPreference(KEY_DEVICE).setEnabled(enabled);
         preferenceScreen.findPreference(KEY_INTERVAL).setEnabled(enabled);
-        preferenceScreen.findPreference(KEY_PROVIDER).setEnabled(enabled);
     }
 
     @Override
@@ -128,10 +127,7 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
             findPreference(KEY_DEVICE).setSummary(sharedPreferences.getString(KEY_DEVICE, null));
         }
         findPreference(KEY_DEVICE).setSummary(sharedPreferences.getString(KEY_DEVICE, null));
-        findPreference(KEY_ADDRESS).setSummary(sharedPreferences.getString(KEY_ADDRESS, null));
-        findPreference(KEY_PORT).setSummary(sharedPreferences.getString(KEY_PORT, null));
         findPreference(KEY_INTERVAL).setSummary(sharedPreferences.getString(KEY_INTERVAL, null));
-        findPreference(KEY_PROVIDER).setSummary(sharedPreferences.getString(KEY_PROVIDER, null));
     }
 
     @Override
@@ -156,8 +152,15 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
     }
 
     private void initPreferences() {
-        findPreference(KEY_ADDRESS).setEnabled(false);
-        findPreference(KEY_PORT).setEnabled(false);
+        if (!sharedPreferences.contains(KEY_PROVIDER)) {
+            sharedPreferences.edit().putString(KEY_PROVIDER, getString(R.string.gps_provider)).commit();
+        }
+        if (!sharedPreferences.contains(KEY_ADDRESS)) {
+            sharedPreferences.edit().putString(KEY_ADDRESS, getString(R.string.ip_address)).commit();
+        }
+        if (!sharedPreferences.contains(KEY_PORT)) {
+            sharedPreferences.edit().putInt(KEY_PORT, 5055);
+        }
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
 
@@ -171,10 +174,7 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
             ((EditTextPreference) findPreference(KEY_DEVICE)).setText(number);
         }
         findPreference(KEY_DEVICE).setSummary(sharedPreferences.getString(KEY_DEVICE, null));
-        findPreference(KEY_ADDRESS).setSummary(sharedPreferences.getString(KEY_ADDRESS, null));
-        findPreference(KEY_PORT).setSummary(sharedPreferences.getString(KEY_PORT, null));
         findPreference(KEY_INTERVAL).setSummary(sharedPreferences.getString(KEY_INTERVAL, null));
-        findPreference(KEY_PROVIDER).setSummary(sharedPreferences.getString(KEY_PROVIDER, null));
     }
 
     private void startTrackingService(boolean checkPermission, boolean permission) {

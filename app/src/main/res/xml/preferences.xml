@@ -17,31 +17,10 @@
         android:title="@string/settings_id_title" />
 
     <EditTextPreference
-        android:defaultValue="202.52.240.146"
-        android:key="address"
-        android:summary="@string/settings_address_summary"
-        android:title="@string/settings_address_title" />
-
-    <EditTextPreference
-        android:defaultValue="5055"
-        android:key="port"
-        android:numeric="integer"
-        android:summary="@string/settings_port_summary"
-        android:title="@string/settings_port_title" />
-
-    <EditTextPreference
         android:defaultValue="300"
         android:key="interval"
         android:numeric="integer"
         android:summary="@string/settings_interval_summary"
         android:title="@string/settings_interval_title" />
-
-    <ListPreference
-        android:defaultValue="gps"
-        android:entries="@array/settings_provider_names"
-        android:entryValues="@array/settings_provider_values"
-        android:key="provider"
-        android:summary="@string/settings_provider_summary"
-        android:title="@string/settings_provider_title" />
 
 </PreferenceScreen>

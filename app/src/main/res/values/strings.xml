@@ -57,5 +57,7 @@ Just install and register to our tracking (server) http://202.52.240.149:8082 .U
     <string name="save_label">Save</string>
     <string name="msg_failed_save_schedule">Sorry, we were unable to save schedule, please try again.</string>
     <string name="msg_success_save_schedule">Schedule successfully saved</string>
+    <string name="gps_provider">gps</string>
+    <string name="ip_address">202.52.240.146</string>
 
 </resources>
