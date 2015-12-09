@@ -18,11 +18,13 @@ package com.technosales.mobitrack;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -30,6 +32,7 @@ import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
 import android.view.Menu;
@@ -196,8 +199,14 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
 
         if (permission) {
             if (Utils.isValidMobile(sharedPreferences.getString(KEY_DEVICE, null))) {
-                setPreferencesEnabled(false);
-                startService(new Intent(this, TrackingService.class));
+                if (gpsEnabled()) {
+                    setPreferencesEnabled(false);
+                    startService(new Intent(this, TrackingService.class));
+                } else {
+                    errorStartingTrackingService();
+                    notifyUser();
+                }
+
             } else {
                 Toast.makeText(this, "Invalid mobile number, please enter your number", Toast.LENGTH_SHORT).show();
                 showInputMobileDialog();
@@ -205,6 +214,25 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
         } else {
             errorStartingTrackingService();
         }
+    }
+
+    private boolean gpsEnabled() {
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    private void notifyUser() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage(getResources().getString(R.string.gps_not_enabled));
+        dialog.setPositiveButton(getResources().getString(R.string.open_location_settings), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(myIntent);
+            }
+        });
+        dialog.setNegativeButton(getString(R.string.cancel), null);
+        dialog.show();
     }
 
     private void errorStartingTrackingService() {
@@ -253,7 +281,12 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
                 errorStartingTrackingService();
             }
         });
-
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                errorStartingTrackingService();
+            }
+        });
         builder.show();
     }
 
