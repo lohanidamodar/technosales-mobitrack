@@ -162,7 +162,7 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
             sharedPreferences.edit().putString(KEY_ADDRESS, getString(R.string.ip_address)).commit();
         }
         if (!sharedPreferences.contains(KEY_PORT)) {
-            sharedPreferences.edit().putInt(KEY_PORT, 5055);
+            sharedPreferences.edit().putString(KEY_PORT, getString(R.string.port));
         }
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 

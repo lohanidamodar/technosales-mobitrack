@@ -57,8 +57,8 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
         networkManager = new NetworkManager(context, this);
         isOnline = networkManager.isOnline();
 
-        address = preferences.getString(MainActivity.KEY_ADDRESS, null);
-        port = Integer.parseInt(preferences.getString(MainActivity.KEY_PORT, null));
+        address = preferences.getString(MainActivity.KEY_ADDRESS, context.getString(R.string.ip_address));
+        port = Integer.parseInt(preferences.getString(MainActivity.KEY_PORT, context.getString(R.string.port)));
 
         PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
