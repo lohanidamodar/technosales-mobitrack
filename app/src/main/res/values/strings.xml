@@ -9,9 +9,9 @@
     <string name="settings_address_summary">Domain name or IP address</string>
     <string name="settings_port_title">Server port</string>
     <string name="settings_port_summary">Tracking server TCP port</string>
-    <string name="settings_interval_title">Frequency</string>
+    <string name="settings_interval_title">Interval (sec)</string>
     <string name="settings_interval_summary">Messages interval in seconds</string>
-    <string name="settings_status_title">Service status</string>
+    <string name="settings_status_title">Application status</string>
     <string name="settings_status_off">Start</string>
     <string name="settings_status_on">Stop</string>
     <string name="settings_status_off_summary">Service stopped</string>
@@ -44,11 +44,11 @@ Just install and register to our tracking (server) http://202.52.240.149:8082 .U
     <string name="about_license">©Technology sales Pvt Ltd (www.technosales.com.np) all right reserved</string>
     <string name="about_web">www.technosales.com.np</string>
 
-    <string name="status_service_create">Service created</string>
-    <string name="status_service_destroy">Service destroyed</string>
-    <string name="status_send_fail">Send failed</string>
-    <string name="status_location_update">Location update</string>
-    <string name="status_connectivity_change">Connectivity change</string>
+    <string name="status_service_create">Service started</string>
+    <string name="status_service_destroy">Service stopped</string>
+    <string name="status_send_fail">Sending failed</string>
+    <string name="status_location_update">Data logged</string>
+    <string name="status_connectivity_change">Connection established</string>
 
     <string name="hidden_app_name">Device Settings</string>
     <string name="hidden_alert">The app has been hidden. To open it again please dial 8722227 (MOBITRACK).</string>
@@ -63,5 +63,7 @@ Just install and register to our tracking (server) http://202.52.240.149:8082 .U
     <string name="open_location_settings">Open Settings</string>
     <string name="cancel">Cancel</string>
     <string name="gps_not_enabled">Sorry, GPS is not enabled. Please enable GPS and try again.</string>
+    <string name="device_idle">Idle for 30 seconds, stopping location tracking</string>
+    <string name="device_active">Active, starting location tracking</string>
 
 </resources>

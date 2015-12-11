@@ -147,7 +147,7 @@ public class TrackingService extends Service implements SensorEventListener {
                 // do something
                 lastSensorUpdate = System.currentTimeMillis();
                 if (trackingStopped) {
-                    StatusActivity.addMessage("Device moved, starting location tracking");
+                    StatusActivity.addMessage(getString(R.string.device_active));
                     Log.d(TAG, "Device moved");
                     trackingController.start();
                     trackingStopped = false;
@@ -155,7 +155,7 @@ public class TrackingService extends Service implements SensorEventListener {
             } else {
                 if ((System.currentTimeMillis() - lastSensorUpdate) > 30000) {
                     if (trackingController != null && !trackingStopped) {
-                        StatusActivity.addMessage("Device was motionless for 30 seconds, stopping location tracking");
+                        StatusActivity.addMessage(getString(R.string.device_idle));
                         Log.d(TAG, "device not moving for 30 seconds");
                         trackingController.stop();
                         trackingStopped = true;
