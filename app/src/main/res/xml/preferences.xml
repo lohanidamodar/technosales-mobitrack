@@ -17,7 +17,7 @@
         android:title="@string/settings_id_title" />
 
     <EditTextPreference
-        android:defaultValue="300"
+        android:defaultValue="15"
         android:key="interval"
         android:numeric="integer"
         android:summary="@string/settings_interval_summary"
