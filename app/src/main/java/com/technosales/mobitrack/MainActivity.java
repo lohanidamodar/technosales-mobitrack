@@ -168,15 +168,12 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
 
 
         if (!sharedPreferences.contains(KEY_DEVICE)) {
-            TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-            String number = tm.getLine1Number();
-            if (number == null) {
-                number = "98510";
-            }
+            String number = "98510";
             sharedPreferences.edit().putString(KEY_DEVICE, number).commit();
             ((EditTextPreference) findPreference(KEY_DEVICE)).setText(number);
         }
         findPreference(KEY_DEVICE).setSummary(sharedPreferences.getString(KEY_DEVICE, null));
+        findPreference(KEY_ADDRESS).setSummary(sharedPreferences.getString(KEY_ADDRESS, getString(R.string.ip_address)));
         findPreference(KEY_INTERVAL).setSummary(sharedPreferences.getString(KEY_INTERVAL, null));
     }
 

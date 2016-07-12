@@ -58,12 +58,12 @@ Just install and register to our tracking (server) http://202.52.240.149:8082 .U
     <string name="msg_failed_save_schedule">Sorry, we were unable to save schedule, please try again.</string>
     <string name="msg_success_save_schedule">Schedule successfully saved</string>
     <string name="gps_provider">gps</string>
-    <string name="ip_address">202.52.240.146</string>
+    <string name="ip_address">202.52.240.149</string>
     <string name="port">5055</string>
     <string name="open_location_settings">Open Settings</string>
     <string name="cancel">Cancel</string>
     <string name="gps_not_enabled">Sorry, GPS is not enabled. Please enable GPS and try again.</string>
-    <string name="device_idle">Idle for 30 seconds, stopping location tracking</string>
-    <string name="device_active">Active, starting location tracking</string>
+    <string name="device_idle">Idle</string>
+    <string name="device_active">Active</string>
 
 </resources>

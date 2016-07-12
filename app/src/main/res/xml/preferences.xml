@@ -12,6 +12,12 @@
         android:widgetLayout="@layout/custom_preference_checkbox" />
 
     <EditTextPreference
+        android:defaultValue="@string/ip_address"
+        android:key="address"
+        android:summary="@string/settings_address_summary"
+        android:title="@string/settings_address_title" />
+
+    <EditTextPreference
         android:inputType="phone"
         android:key="id"
         android:title="@string/settings_id_title" />

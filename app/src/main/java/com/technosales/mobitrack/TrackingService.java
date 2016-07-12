@@ -153,10 +153,10 @@ public class TrackingService extends Service implements SensorEventListener {
                     trackingStopped = false;
                 }
             } else {
-                if ((System.currentTimeMillis() - lastSensorUpdate) > 30000) {
+                if ((System.currentTimeMillis() - lastSensorUpdate) > 300000) {
                     if (trackingController != null && !trackingStopped) {
                         StatusActivity.addMessage(getString(R.string.device_idle));
-                        Log.d(TAG, "device not moving for 30 seconds");
+                        Log.d(TAG, "device not moving for 5 minutes");
                         trackingController.stop();
                         trackingStopped = true;
                     }
